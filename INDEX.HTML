@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Tracker de Calistenia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>💪 Calistenia Tracker</h1>
+    <p id="greeting" class="greeting"></p>
+    <nav>
+      <button class="tab-btn" data-tab="profile">Perfil</button>
+      <button class="tab-btn" data-tab="library">Librería</button>
+      <button class="tab-btn active" data-tab="routines">Rutinas</button>
+      <button class="tab-btn" data-tab="history">Historial</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- PERFIL -->
+    <section id="profile" class="tab-content">
+      <h2>Mi Perfil</h2>
+      <div class="panel">
+        <label>Nombre
+          <input id="p-name" type="text" placeholder="Tu nombre">
+        </label>
+        <label>Altura (cm)
+          <input id="p-height" type="number" min="0" placeholder="Ej: 170">
+        </label>
+        <label>Peso (kg)
+          <input id="p-weight" type="number" min="0" step="0.1" placeholder="Ej: 70">
+        </label>
+        <label>Meta semanal (días de entreno)
+          <input id="p-goal" type="number" min="1" max="7" value="3">
+        </label>
+        <button id="save-profile" class="primary-btn">Guardar perfil</button>
+        <p id="imc-box" class="hint"></p>
+      </div>
+    </section>
+
+    <!-- LIBRERÍA -->
+    <section id="library" class="tab-content">
+      <h2>Librería de Ejercicios</h2>
+      <p class="hint">Toca un ejercicio para ver para qué sirve. Usa + para añadirlo a una rutina.</p>
+      <ul id="exercise-list" class="ex-list"></ul>
+    </section>
+
+    <!-- RUTINAS -->
+    <section id="routines" class="tab-content active">
+      <h2>Mis Rutinas</h2>
+      <div id="routine-list"></div>
+      <button id="new-routine" class="primary-btn">＋ Crear nueva rutina</button>
+      <button id="restore-routines" class="danger-btn">↺ Restaurar rutinas originales</button>
+    </section>
+
+    <!-- HISTORIAL -->
+    <section id="history" class="tab-content">
+      <h2>Historial y Progreso</h2>
+
+      <div class="panel">
+        <h3>Meta de la semana</h3>
+        <p id="week-text" class="hint"></p>
+        <div class="bar"><div id="week-fill" class="bar-fill"></div></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="stat-sessions">0</strong><span>Sesiones</span></div>
+        <div class="stat"><strong id="stat-reps">0</strong><span>Repeticiones</span></div>
+      </div>
+
+      <div class="panel">
+        <h3>Repeticiones por ejercicio</h3>
+        <div id="exercise-bars"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Grupos musculares</h3>
+        <div class="pie-wrap">
+          <div id="pie" class="pie"></div>
+          <ul id="pie-legend" class="legend"></ul>
+        </div>
+      </div>
+
+      <h3 class="sub-title">Sesiones registradas</h3>
+      <ul id="session-list" class="session-list"></ul>
+    </section>
+  </main>
+
+  <!-- Diálogo: añadir ejercicio a rutina -->
+  <dialog id="add-dialog">
+    <h3 id="add-title"></h3>
+    <div id="add-options" class="options"></div>
+    <button id="add-new" type="button" class="primary-btn">＋ Nueva rutina</button>
+    <button id="add-cancel" type="button" class="ghost-btn">Cancelar</button>
+  </dialog>
+
+  <!-- Diálogo: registrar entrenamiento -->
+  <dialog id="log-dialog">
+    <h3 id="log-title"></h3>
+    <p class="hint">Pon las series y las repeticiones por serie de cada ejercicio.</p>
+    <div id="log-rows"></div>
+    <button id="log-save" type="button" class="primary-btn">Guardar entrenamiento</button>
+    <button id="log-cancel" type="button" class="ghost-btn">Cancelar</button>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
