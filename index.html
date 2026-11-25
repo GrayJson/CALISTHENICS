@@ -2,109 +2,160 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Tracker de Calistenia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b12">
+<title>Calisthenics Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>💪 Calistenia Tracker</h1>
-    <p id="greeting" class="greeting"></p>
-    <nav>
-      <button class="tab-btn" data-tab="profile">Perfil</button>
-      <button class="tab-btn" data-tab="library">Librería</button>
-      <button class="tab-btn active" data-tab="routines">Rutinas</button>
-      <button class="tab-btn" data-tab="history">Historial</button>
-    </nav>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>
+      </div>
+      <h1>CALISTHENICS</h1>
+      <span class="badge-pro">TRACKER</span>
+    </div>
+    <button id="profile-btn" class="avatar" aria-label="Mi perfil">👤</button>
   </header>
+  <p id="greeting" class="greeting"></p>
 
   <main>
-    <!-- PERFIL -->
-    <section id="profile" class="tab-content">
-      <h2>Mi Perfil</h2>
-      <div class="panel">
-        <label>Nombre
-          <input id="p-name" type="text" placeholder="Tu nombre">
-        </label>
-        <label>Altura (cm)
-          <input id="p-height" type="number" min="0" placeholder="Ej: 170">
-        </label>
-        <label>Peso (kg)
-          <input id="p-weight" type="number" min="0" step="0.1" placeholder="Ej: 70">
-        </label>
-        <label>Meta semanal (días de entreno)
-          <input id="p-goal" type="number" min="1" max="7" value="3">
-        </label>
-        <button id="save-profile" class="primary-btn">Guardar perfil</button>
-        <p id="imc-box" class="hint"></p>
-      </div>
-    </section>
-
     <!-- LIBRERÍA -->
-    <section id="library" class="tab-content">
-      <h2>Librería de Ejercicios</h2>
-      <p class="hint">Toca un ejercicio para ver para qué sirve. Usa + para añadirlo a una rutina.</p>
-      <ul id="exercise-list" class="ex-list"></ul>
+    <section id="library" class="view">
+      <h2 class="view-title">Librería de Ejercicios</h2>
+      <p class="view-sub pink">💡 Toca cualquier ejercicio para ver <b>CÓMO</b> ejecutarlo</p>
+      <div id="exercise-list"></div>
     </section>
 
     <!-- RUTINAS -->
-    <section id="routines" class="tab-content active">
-      <h2>Mis Rutinas</h2>
+    <section id="routines" class="view active">
+      <h2 class="view-title">Mis Rutinas</h2>
+      <p class="view-sub">Elige una y pulsa <b>Entrenar</b></p>
       <div id="routine-list"></div>
-      <button id="new-routine" class="primary-btn">＋ Crear nueva rutina</button>
-      <button id="restore-routines" class="danger-btn">↺ Restaurar rutinas originales</button>
+      <button id="new-routine" class="dashed-btn" type="button">＋ Crear nueva rutina</button>
     </section>
 
-    <!-- HISTORIAL -->
-    <section id="history" class="tab-content">
-      <h2>Historial y Progreso</h2>
+    <!-- ENTRENAR -->
+    <section id="train" class="view">
+      <h2 class="view-title">Entrenar</h2>
+      <p class="view-sub">¿Qué toca hoy?</p>
+      <div id="train-week" class="card"></div>
+      <div id="train-list"></div>
+    </section>
 
-      <div class="panel">
-        <h3>Meta de la semana</h3>
-        <p id="week-text" class="hint"></p>
-        <div class="bar"><div id="week-fill" class="bar-fill"></div></div>
+    <!-- PROGRESO -->
+    <section id="progress" class="view">
+      <h2 class="view-title">Historial de Progreso</h2>
+      <p class="view-sub">Registro de entrenamientos guardados</p>
+
+      <div class="card">
+        <div class="kicker">META DE LA SEMANA</div>
+        <div class="wk-meta"><span id="week-text"></span><span id="week-pct"></span></div>
+        <div class="progress"><i id="week-fill"></i></div>
       </div>
 
-      <div class="stats">
+      <div class="stats3">
         <div class="stat"><strong id="stat-sessions">0</strong><span>Sesiones</span></div>
+        <div class="stat"><strong id="stat-sets">0</strong><span>Series</span></div>
         <div class="stat"><strong id="stat-reps">0</strong><span>Repeticiones</span></div>
       </div>
 
-      <div class="panel">
-        <h3>Repeticiones por ejercicio</h3>
+      <div class="card">
+        <h3 class="card-title">Series por ejercicio</h3>
         <div id="exercise-bars"></div>
       </div>
 
-      <div class="panel">
-        <h3>Grupos musculares</h3>
+      <div class="card">
+        <h3 class="card-title">Grupos musculares</h3>
         <div class="pie-wrap">
           <div id="pie" class="pie"></div>
           <ul id="pie-legend" class="legend"></ul>
         </div>
       </div>
 
-      <h3 class="sub-title">Sesiones registradas</h3>
-      <ul id="session-list" class="session-list"></ul>
+      <h3 class="section-title">Sesiones</h3>
+      <div id="session-list"></div>
     </section>
   </main>
 
-  <!-- Diálogo: añadir ejercicio a rutina -->
-  <dialog id="add-dialog">
-    <h3 id="add-title"></h3>
-    <div id="add-options" class="options"></div>
-    <button id="add-new" type="button" class="primary-btn">＋ Nueva rutina</button>
-    <button id="add-cancel" type="button" class="ghost-btn">Cancelar</button>
-  </dialog>
+  <nav class="bottom-nav">
+    <button class="nav-btn" data-view="library" type="button">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Librería</span>
+    </button>
+    <button class="nav-btn active" data-view="routines" type="button">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      <span>Rutinas</span>
+    </button>
+    <button class="nav-btn nav-center" data-view="train" type="button">
+      <span class="play-circle"><svg viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20 7 4"/></svg></span>
+      <span>Entrenar</span>
+    </button>
+    <button class="nav-btn" data-view="progress" type="button">
+      <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      <span>Progreso</span>
+    </button>
+  </nav>
+</div>
 
-  <!-- Diálogo: registrar entrenamiento -->
-  <dialog id="log-dialog">
-    <h3 id="log-title"></h3>
-    <p class="hint">Pon las series y las repeticiones por serie de cada ejercicio.</p>
-    <div id="log-rows"></div>
-    <button id="log-save" type="button" class="primary-btn">Guardar entrenamiento</button>
-    <button id="log-cancel" type="button" class="ghost-btn">Cancelar</button>
-  </dialog>
+<!-- Detalle del ejercicio -->
+<dialog id="ex-dialog" class="sheet"><div class="sheet-in">
+  <div class="sheet-head">
+    <span id="ex-d-icon" class="dot-icon"></span>
+    <h3 id="ex-d-title"></h3>
+    <button id="ex-d-close" class="x-btn" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="sheet-body" id="ex-d-body"></div>
+  <button id="ex-d-add" class="ghost-pink" type="button">＋ Añadir a una rutina</button>
+  <button id="ex-d-ok" class="btn-pink big" type="button">¡Entendido!</button>
+</div></dialog>
 
-  <script src="script.js"></script>
+<!-- Añadir a rutina -->
+<dialog id="add-dialog" class="sheet"><div class="sheet-in">
+  <div class="sheet-head">
+    <h3 id="add-title">Añadir a...</h3>
+    <button id="add-close" class="x-btn" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="sheet-body" id="add-options"></div>
+  <button id="add-new" class="ghost-pink" type="button">＋ Nueva rutina</button>
+</div></dialog>
+
+<!-- Perfil -->
+<dialog id="profile-dialog" class="sheet"><div class="sheet-in">
+  <div class="sheet-head">
+    <h3>Mi perfil</h3>
+    <button id="profile-close" class="x-btn" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="sheet-body">
+    <label class="field">Nombre
+      <input id="p-name" type="text" placeholder="Tu nombre">
+    </label>
+    <label class="field">Altura (cm)
+      <input id="p-height" type="number" inputmode="decimal" min="0" placeholder="Ej: 170">
+    </label>
+    <label class="field">Peso (kg)
+      <input id="p-weight" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Ej: 70">
+    </label>
+    <label class="field">Meta semanal (días de entreno)
+      <input id="p-goal" type="number" inputmode="numeric" min="1" max="7" value="3">
+    </label>
+    <p id="imc-box" class="imc"></p>
+  </div>
+  <button id="save-profile" class="btn-pink big" type="button">Guardar perfil</button>
+  <button id="restore-routines" class="link danger" type="button">↺ Restaurar rutinas originales</button>
+</div></dialog>
+
+<!-- Pantalla de entrenamiento paso a paso -->
+<div id="workout" class="workout hidden"></div>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
