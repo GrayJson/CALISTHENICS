@@ -262,9 +262,11 @@ function renderLibrary() {
 function openExercise(name) {
   const ex = byName(name);
   currentExercise = name;
+  const fig = typeof FIG !== "undefined" && FIG.has(name);
   $("#ex-d-icon").textContent = ex.icon;
   $("#ex-d-title").textContent = ex.name;
   $("#ex-d-body").innerHTML = `
+    ${fig ? '<div class="fig-box" id="fig-ex"></div>' : ""}
     <div class="chip-row"><span class="chip-label">Músculos<br>Afectados:</span><span class="chip-pink">${ex.muscles}</span></div>
     <div class="step-card"><div class="step-title"><b>1</b> POSICIÓN INICIAL</div><p>${ex.start}</p></div>
     <div class="step-card"><div class="step-title"><b>2</b> EJECUCIÓN CORRECTA</div><p>${ex.exec}</p></div>
@@ -272,6 +274,7 @@ function openExercise(name) {
       <ul class="tips">${ex.tips.map(t => `<li>${t}</li>`).join("")}</ul></div>
     <p class="hint-mono">Nivel: ${ex.level} · Meta sugerida: ${ex.sets} x ${ex.target}${ex.type === "time" ? " segundos" : ""}</p>`;
   $("#ex-dialog").showModal();
+  if (fig) FIG.mount($("#fig-ex"), name);
 }
 $("#ex-d-close").addEventListener("click", () => $("#ex-dialog").close());
 $("#ex-d-ok").addEventListener("click", () => $("#ex-dialog").close());
@@ -587,24 +590,28 @@ function renderWorkout() {
   const totalSets = wk.items.reduce((a, it) => a + (it.skipped ? it.done.length : it.sets), 0);
   const doneSets = wk.items.reduce((a, it) => a + it.done.length, 0);
   const pct = totalSets ? Math.round((doneSets / totalSets) * 100) : 0;
-  const it = wk.items[wk.i];
+
+  // Si es el descanso tras terminar un ejercicio, mostramos el SIGUIENTE
+  const showNext = wk.phase === "rest" && wk.pendingNext;
+  const idx = showNext ? wk.i + 1 : wk.i;
+  const it = wk.items[idx];
   const meta = byName(it.name) || { icon: "•", muscles: "", level: "", start: "", exec: "", tips: [] };
   const isTime = it.type === "time";
-  if (isTime && !wk.hold) wk.hold = { target: it.target, running: false, start: 0 };
+  if (isTime && !wk.hold && wk.phase === "work") wk.hold = { target: it.target, running: false, start: 0 };
 
-  const steps = wk.items.map((x, idx) => {
-    let cls = "step", txt = idx + 1;
+  const steps = wk.items.map((x, n) => {
+    let cls = "step", txt = n + 1;
     if (x.skipped) { cls += " skip"; txt = "⏭"; }
     else if (x.done.length >= x.sets) { cls += " done"; txt = "✓"; }
-    if (idx === wk.i) cls += " current";
+    if (n === idx) cls += " current";
     return `<div class="${cls}">${txt}</div>`;
   }).join("");
 
   let panel = "";
   if (wk.phase === "rest") {
     const left = restLeft();
-    const nxt = wk.pendingNext
-      ? `Ejercicio ${wk.i + 2}: <b>${esc(wk.items[wk.i + 1].name)}</b>`
+    const nxt = showNext
+      ? `Ejercicio ${idx + 1}: <b>${esc(it.name)}</b> · ${it.sets} x ${it.target}${isTime ? "s" : ""}`
       : `Serie ${it.done.length + 1} de ${it.sets}: <b>${esc(it.name)}</b>`;
     panel = `
       <div class="wk-panel center">
@@ -643,6 +650,8 @@ function renderWorkout() {
       </div>`;
   }
 
+  const hasFig = typeof FIG !== "undefined" && FIG.has(it.name);
+
   box.innerHTML = `
     <div class="wk-inner">
       <div class="wk-top">
@@ -659,12 +668,13 @@ function renderWorkout() {
         <div class="wk-ex-head">
           <div class="ex-ico big">${meta.icon}</div>
           <div>
-            <div class="kicker">EJERCICIO ${wk.i + 1} DE ${wk.items.length}</div>
+            <div class="kicker">${showNext ? "SIGUE · " : ""}EJERCICIO ${idx + 1} DE ${wk.items.length}</div>
             <div class="wk-ex-name">${esc(it.name)}</div>
             <div class="ex-sub">${meta.muscles}</div>
           </div>
         </div>
-        <details class="tech" ${wk.techOpen ? "open" : ""}>
+        ${hasFig ? '<div class="fig-box" id="wk-fig"></div>' : ""}
+        <details class="tech" ${(wk.techOpen || showNext) ? "open" : ""}>
           <summary>Cómo ejecutarlo</summary>
           <p><b>Posición:</b> ${meta.start}</p>
           <p><b>Ejecución:</b> ${meta.exec}</p>
@@ -674,6 +684,8 @@ function renderWorkout() {
       ${panel}
     </div>`;
   bindWorkout();
+  const fb = $("#wk-fig");
+  if (fb) FIG.mount(fb, it.name);
 }
 
 function renderSummary(box) {
@@ -706,7 +718,8 @@ function renderProgress() {
   $("#week-text").textContent = `${w.count} de ${w.goal} entrenamientos`;
   $("#week-pct").textContent = w.pct + "%";
   $("#week-fill").style.width = w.pct + "%";
-
+  if (typeof BODY !== "undefined") BODY.render(history);
+  
   let totalSets = 0, totalReps = 0;
   const perEx = {}, perCat = {};
   history.forEach(s => s.items.forEach(it => {
